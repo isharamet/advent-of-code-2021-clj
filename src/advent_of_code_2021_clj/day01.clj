@@ -13,7 +13,7 @@
        (partition 2 1)
        (map (fn [[l r]] (- r l)))
        (filter pos-int?)
-       (count)))))
+       (count)))
 
 (defn part1
   [input]
