@@ -14,4 +14,3 @@
     "day01" (println
              (day01/part1 (read-input "day01"))
              (day01/part2 (read-input "day01")))))
-

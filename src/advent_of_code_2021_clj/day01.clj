@@ -19,14 +19,12 @@
   [input]
   (->> input
        (parse-input)
-       (partition 2 1)
-       (map (fn [[l r]] (- r l)))
-       (filter pos-int?)
-       (count))))
+       (count-increase)))
 
 (defn part2
   [input]
   (->> input
        (parse-input)
        (partition 3 1)
-       (map #(reduce + %))))
+       (map #(reduce + %))
+       (count-increase)))
