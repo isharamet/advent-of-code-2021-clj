@@ -9,8 +9,6 @@
   [day]
   (slurp (io/resource (str day ".txt"))))
 
-(day03/part1 (read-input "day03"))
-
 (defn -main
   [day]
   (case day
@@ -19,4 +17,7 @@
              (day01/part2 (read-input "day01")))
     "day02" (println
              (day02/part1 (read-input "day02"))
-             (day02/part2 (read-input "day02")))))
+             (day02/part2 (read-input "day02")))
+    "day03" (println
+             (day03/part1 (read-input "day03"))
+             (day03/part2 (read-input "day03")))))

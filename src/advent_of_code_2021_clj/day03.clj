@@ -32,46 +32,84 @@
        (* m 2)
        (+ acc (* (last arr) m))))))
 
-(defn most-common
+(defn- most-common
   [sums c]
-  (->> sums
-       (map #(if (> % c) 1 0))
-       (parse-int)))
+  (map #(if (> % c) 1 0) sums))
 
-(defn least-common
+(defn- least-common
   [sums c]
-  (->> sums
-       (map #(if (< % c) 1 0))
-       (parse-int)))
+  (map #(if (< % c) 1 0) sums))
 
-(defn- rates
+(defn- one-filter
   [sums c]
-  (let [gamma (most-common sums c)
-        epsilon (least-common sums c)]
-    {:gamma gamma
-     :epsilon epsilon}))
+  (map #(if (> % c)
+          1
+          (if (= % c) 1 0))
+       sums))
 
-(defn- generate-report
+(defn- zero-filter
+  [sums c]
+  (map #(if (> % c)
+          0
+          (if (= % c) 0 1))
+       sums))
+
+(defn- power-consumption-from-sums
+  [sums c]
+  (let [mc (most-common sums c)
+        lc (least-common sums c)
+        gamma (parse-int mc)
+        epsilon (parse-int lc)]
+    (* gamma epsilon)))
+
+(defn- power-consumption
   [readings]
   (let [c (/ (count readings) 2)]
     (->> readings
          (reduce sum-arrays)
-         (#(rates % c)))))
+         (#(power-consumption-from-sums % c)))))
 
-(defn- xyz
+(defn- filter-on-nth
+  [readings n v]
+  (filter #(= v (nth % n)) readings))
+
+(defn- life-support-rating
   [readings f]
   (loop [i 0
-         readings readings]))
+         readings readings]
+    (let [sums (reduce sum-arrays readings)
+          guide (f sums (/ (count readings) 2))]
+      (if (or (= (count readings) 1)
+              (= i (count guide)))
+        (first readings)
+        (recur
+         (inc i)
+         (filter-on-nth readings i (nth guide i)))))))
+
+(defn- o2-rating
+  [readings]
+  (life-support-rating readings one-filter))
+
+(defn- co2-rating
+  [readings]
+  (life-support-rating readings zero-filter))
+
+(defn- life-support
+  [readings]
+  (let [o2-bin (o2-rating readings)
+        co2-bin (co2-rating readings)
+        o2 (parse-int o2-bin)
+        co2 (parse-int co2-bin)]
+    (* o2 co2)))
+
 (defn part1
   [input]
   (->> input
        (parse-input)
-       (generate-report)
-       ((fn [{gamma :gamma
-              epsilon :epsilon}]
-          (* gamma epsilon)))))
+       (power-consumption)))
 
 (defn part2
   [input]
   (->> input
-       (parse-input)))
+       (parse-input)
+       (life-support)))

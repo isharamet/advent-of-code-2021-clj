@@ -6,7 +6,5 @@
 (deftest test-part1
   (is (= 198 (day03/part1 (core/read-input "day03-test")))))
 
-(day03/part1 (core/read-input "day03-test"))
-
 (deftest test-part2
-  (is (= 198 (day03/part1 (core/read-input "day03-test")))))
+  (is (= 230 (day03/part2 (core/read-input "day03-test")))))
