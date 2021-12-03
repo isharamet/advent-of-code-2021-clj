@@ -2,11 +2,14 @@
   (:gen-class)
   (:require [clojure.java.io :as io]
             [advent-of-code-2021-clj.day01 :as day01]
-            [advent-of-code-2021-clj.day02 :as day02]))
+            [advent-of-code-2021-clj.day02 :as day02]
+            [advent-of-code-2021-clj.day03 :as day03]))
 
 (defn read-input
   [day]
   (slurp (io/resource (str day ".txt"))))
+
+(day03/part1 (read-input "day03"))
 
 (defn -main
   [day]
