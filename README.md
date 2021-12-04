@@ -12,4 +12,4 @@ lein run day01
 - [x] [Day 1](https://adventofcode.com/2021/day/1)
 - [x] [Day 2](https://adventofcode.com/2021/day/2)
 - [x] [Day 3](https://adventofcode.com/2021/day/3)
-- [ ] [Day 4](https://adventofcode.com/2021/day/4)
+- [x] [Day 4](https://adventofcode.com/2021/day/4)

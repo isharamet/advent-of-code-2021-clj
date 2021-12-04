@@ -5,7 +5,7 @@
 
 (def board-size 5)
 
-(defn- parse-draw
+(defn- parse-draws
   [input]
   (str/split input #","))
 
@@ -19,10 +19,10 @@
        (into [])))
 
 (defn- parse-bingo
-  [[draw & boards]]
-  (let [draw (parse-draw draw)
+  [[draws & boards]]
+  (let [draws (parse-draws draws)
         boards (map parse-board boards)]
-    {:draw draw
+    {:draws draws
      :boards boards}))
 
 (defn- parse-input
@@ -66,22 +66,42 @@
        "1" "2" "3" "4" "5"
        "1" "X" "3" "4" "5"])
 
-(defn- find-winner
-  [{draw :draw
+(defn- first-winner
+  [{draws :draws
     boards :boards}]
-  (loop [draw draw
+  (loop [draws draws
          boards boards]
-    (if (empty? draw)
+    (if (empty? draws)
       nil
-      (let [d (first draw)
-            boards (map #(mark-draw % d) boards)
+      (let [draw (first draws)
+            boards (map #(mark-draw % draw) boards)
             winner (first (filter bingo? boards))]
         (if (some? winner)
           {:winning-board winner
-           :last-draw d}
+           :last-draw draw}
           (recur
-           (rest draw)
+           (rest draws)
            boards))))))
+
+(defn- last-winner
+  [{draws :draws
+    boards :boards}]
+  (loop [draws draws
+         boards boards
+         res nil]
+    (if (empty? draws)
+      res
+      (let [draw (first draws)
+            boards (map #(mark-draw % draw) boards)
+            winners (filter bingo? boards)
+            boards (remove bingo? boards)]
+        (recur
+         (rest draws)
+         boards
+         (if (empty? winners)
+           res
+           {:winning-board (last winners)
+            :last-draw draw}))))))
 
 (defn- board-sum
   [board]
@@ -90,20 +110,22 @@
        (map #(Integer/parseInt %))
        (reduce +)))
 
-(board-sum
- ["X" "X" "X" "X" "X"
-  "1" "X" "3" "4" "5"
-  "1" "X" "3" "4" "5"
-  "1" "2" "3" "4" "5"
-  "1" "X" "3" "4" "5"])
+(defn compute-score
+  [{winning-board :winning-board
+    last-draw :last-draw}]
+  (* (board-sum winning-board)
+     (Integer/parseInt last-draw)))
 
 (defn part1
   [input]
   (->> input
        (parse-input)
-       (find-winner)))
+       (first-winner)
+       (compute-score)))
 
 (defn part2
   [input]
   (->> input
-       (parse-input)))
+       (parse-input)
+       (last-winner)
+       (compute-score)))
