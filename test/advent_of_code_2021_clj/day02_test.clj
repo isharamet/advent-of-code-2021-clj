@@ -4,7 +4,7 @@
             [advent-of-code-2021-clj.day02 :as day02]))
 
 (deftest test-part1
-  (is (= 1488669 (day02/part1 (core/read-input "day02")))))
+  (is (= 150 (day02/part1 (core/read-input "day02-test")))))
 
 (deftest test-part2
-  (is (= 1176514794 (day02/part2 (core/read-input "day02")))))
+  (is (= 900 (day02/part2 (core/read-input "day02-test")))))
