@@ -59,13 +59,6 @@
   (or (has-complete-rows? board)
       (has-complete-cols? board)))
 
-(some bingo?
-      ["X" "X" "X" "X" "X"
-       "1" "X" "3" "4" "5"
-       "1" "X" "3" "4" "5"
-       "1" "2" "3" "4" "5"
-       "1" "X" "3" "4" "5"])
-
 (defn- first-winner
   [{draws :draws
     boards :boards}]
