@@ -2,6 +2,11 @@
 
 [Advent of Code 2021](https://adventofcode.com/2021) solutions in Clojure
 
+# Testing
+
+```shell
+lein test
+```
 # Running
 
 ```shell
@@ -13,3 +18,4 @@ lein run day01
 - [x] [Day 2](https://adventofcode.com/2021/day/2)
 - [x] [Day 3](https://adventofcode.com/2021/day/3)
 - [x] [Day 4](https://adventofcode.com/2021/day/4)
+- [x] [Day 5](https://adventofcode.com/2021/day/5)
