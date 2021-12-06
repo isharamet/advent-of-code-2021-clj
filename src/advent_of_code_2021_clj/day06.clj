@@ -1,36 +1,52 @@
 (ns advent-of-code-2021-clj.day06
   (:require [clojure.string :as str]))
 
-(def target-age 80)
-
 (defn- parse-input
   [input]
   (->> input
        (#(str/split % #","))
        (map #(Integer/parseInt %))))
 
-(defn- update-age
-  [age]
-  (if (> age 0) (dec age) 6))
+(defn- inc-nth
+  [coll n]
+  (let [x (inc (nth coll n))]
+    (assoc coll n x)))
+
+(defn- add-to-nth
+  [coll n a]
+  (let [x (+ (nth coll n) a)]
+    (assoc coll n x)))
+
+(defn- to-age-array
+  [school]
+  (let [ages (into [] (repeat 9 0))]
+    (reduce #(inc-nth %1 %2) ages school)))
 
 (defn- progress
   [school]
-  (let [newborns (count (filter zero? school))
-        school (map update-age school)]
-    (concat school (repeat newborns 8))))
+  (let [newborns (first school)]
+    (->> school
+         (rest)
+         (into [])
+         (#(conj % newborns))
+         (#(add-to-nth % 6 newborns)))))
 
 (defn- progress-to-age
   [school age]
   (reduce (fn [s _] (progress s)) school (range age)))
 
-(defn part1
-  [input]
+(defn- solve
+  [input age]
   (->> input
        (parse-input)
-       (#(progress-to-age % target-age))
-       count))
+       (to-age-array)
+       (#(progress-to-age % age))
+       (reduce +)))
+
+(defn part1
+  [input]
+  (solve input 80))
 
 (defn part2
   [input]
-  (->> input
-       (parse-input)))
+  (solve input 256))
