@@ -7,6 +7,10 @@
        (#(str/split % #","))
        (map #(Integer/parseInt %))))
 
+(defn round
+  [r]
+  (Math/round (double r)))
+
 (defn- median
   [coll]
   (let [coll (sort coll)
@@ -17,22 +21,53 @@
       (let [a (nth coll (- mid 1))
             b (nth coll mid)
             m (/ (+ a b) 2)]
-        (Math/round (double m))))))
+        (round m)))))
 
-(defn- solve
+(defn- fuel-lin
+  [coll m]
+  (map #(Math/abs (- % m)) coll))
+
+(defn- fuel-exp-dist
+  [dist]
+  (int (/ (+ (* dist dist) dist) 2)))
+
+(defn- fuel-exp
+  [coll m]
+  (->> coll
+       (map #(Math/abs (- m %)))
+       (map fuel-exp-dist)))
+
+(defn- solve-lin
   [coll]
   (let [m (median coll)
-        fuel (map #(Math/abs (- % m)) coll)]
+        fuel (fuel-lin coll m)]
     (reduce + fuel)))
+
+(defn- mean
+  [coll]
+  (let [size (count coll)
+        sum (reduce + coll)]
+    (/ sum size)))
+
+(defn- solve-exp
+  [coll]
+  (let [m (mean coll)
+        mlo (Math/floor m)
+        mhi (Math/ceil m)
+        flo (fuel-exp coll mlo)
+        fhi (fuel-exp coll mhi)]
+    (->> [flo fhi]
+         (map #(reduce + %))
+         (apply min))))
 
 (defn part1
   [input]
   (->> input
        (parse-input)
-       (solve)))
+       (solve-lin)))
 
-;; (defn part2
-;;   [input]
-;;   (->> input
-;;        (parse-input)
-;;        (median)))
+(defn part2
+  [input]
+  (->> input
+       (parse-input)
+       (solve-exp)))
