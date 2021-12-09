@@ -61,24 +61,56 @@
   [coll]
   (let [dim (get-dim coll)
         coords (gen-coords dim)]
-    (->> coords
-         (filter #(is-low-point? % dim coll))
-         (map #(get-val % coll)))))
+    (filter #(is-low-point? % dim coll) coords)))
 
 (defn- solve1
   [coll]
   (->> coll
        (find-low-points)
+       (map #(get-val % coll))
        (map inc)
        (reduce +)))
 
+(defn- basin-size
+  [[row col :as coord] dim coll prev visited]
+  (if (and (valid-coord? coord dim)
+           (not (contains? visited coord)))
+    (let [x (get-val coord coll)]
+      (if (or (nil? prev) (> 9 x prev))
+        (let [visited (conj visited coord)
+              {top :size
+               visited :visited}
+              (basin-size [(inc row) col] dim coll x visited)
+              {bottom :size
+               visited :visited}
+              (basin-size [(dec row) col] dim coll x visited)
+              {left :size
+               visited :visited}
+              (basin-size [row (dec col)] dim coll x visited)
+              {right :size
+               visited :visited}
+              (basin-size [row (inc col)] dim coll x visited)]
+          {:size (+ 1 top bottom left right)
+           :visited visited})
+        {:size 0
+         :visited visited}))
+    {:size 0
+     :visited visited}))
+
+(defn- solve2
+  [coll]
+  (->> coll
+       (find-low-points)
+       (map #(basin-size % (get-dim coll) coll nil #{}))
+       (map :size)
+       (sort-by #(- %))
+       (take 3)
+       (reduce *)))
+
 (defn part1
   [input]
-  (->> input
-       (parse-input)
-       (solve1)))
+  (solve1 (parse-input input)))
 
-;; (defn part2
-;;   [input]
-;;   (->> input
-;;        (parse-input)))
+(defn part2
+  [input]
+  (solve2 (parse-input input)))
