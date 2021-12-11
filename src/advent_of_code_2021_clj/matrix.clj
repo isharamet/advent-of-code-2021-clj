@@ -26,6 +26,14 @@
   (and (>= row 0) (< row height)
        (>= col 0) (< col width)))
 
+(defn gen-neighbours
+  [[row col] dim]
+  (let [adj [[(dec row) col]
+             [(inc row) col]
+             [row (dec col)]
+             [row (inc col)]]]
+    (filter #(valid-coord? % dim) adj)))
+
 (defn gen-adjacent
   [[row col] dim]
   (let [adj [[(dec row) col]

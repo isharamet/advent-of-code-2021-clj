@@ -20,15 +20,15 @@
        (into [])))
 
 (defn- update-energy
-  [coord dim coll]
-  (let [x (mx/get-val coord coll)]
+  [coord dim m]
+  (let [x (mx/get-val coord m)]
     (if (> x 9)
-      coll
+      m
       (let [x (inc x)]
         (if (> x 9)
           (let [adj (mx/gen-adjacent coord dim)]
-            (reduce #(update-energy %2 dim %1) (mx/set-val coord x coll) adj))
-          (mx/set-val coord x coll))))))
+            (reduce #(update-energy %2 dim %1) (mx/set-val coord x m) adj))
+          (mx/set-val coord x m))))))
 
 (defn- count-flashes
   [m]
@@ -51,9 +51,9 @@
     {:m m :c c}))
 
 (defn- progress
-  [coords dim coll]
+  [coords dim m]
   (->> coords
-       (reduce #(update-energy %2 dim %1) coll)
+       (reduce #(update-energy %2 dim %1) m)
        (count-and-reset)))
 
 (defn- progress-n
@@ -67,13 +67,27 @@
             {:m m :c 0}
             cycles)))
 
+(defn- synchronized?
+  [m]
+  (every? true? (map (fn [r] (every? zero? r)) m)))
+
+(defn- progress-till-sync
+  [m]
+  (let [dim (mx/dimensions m)
+        coords (mx/gen-coords dim)]
+    (loop [m m
+           c 0]
+      (let [m ((progress coords dim m) :m)
+            c (inc c)]
+        (if (synchronized? m) c (recur m c))))))
+
 (defn- solve1
   [m]
   ((progress-n m 100) :c))
 
 (defn- solve2
-  [input]
-  input)
+  [m]
+  (progress-till-sync m))
 
 (defn part1
   [input]

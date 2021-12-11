@@ -1,5 +1,6 @@
 (ns advent-of-code-2021-clj.day09
-  (:require [clojure.string :as str]))
+  (:require [clojure.string :as str]
+            [advent-of-code-2021-clj.matrix :as mx]))
 
 (def zero (int \0))
 
@@ -18,64 +19,34 @@
        (map parse-line)
        (into [])))
 
-(defn- get-dim
-  [coll]
-  (let [h (count coll)
-        w (count (first coll))]
-    [h w]))
-
-(defn- get-val
-  [[row col] coll]
-  (nth (nth coll row) col))
-
-(defn- gen-coords
-  [[height width]]
-  (let [indices (range (* height width))]
-    (map (fn [x]
-           [(int (/ x width)) (mod x width)])
-         indices)))
-
-(defn- valid-coord?
-  [[row col] [height width]]
-  (and (>= row 0) (< row height)
-       (>= col 0) (< col width)))
-
-(defn- gen-adjacent
-  [[row col] dim]
-  (let [adj [[(dec row) col]
-             [(inc row) col]
-             [row (dec col)]
-             [row (inc col)]]]
-    (filter #(valid-coord? % dim) adj)))
-
 (defn- is-low-point?
   [[row col] dim coll]
-  (let [x (get-val [row col] coll)
-        adj (gen-adjacent [row col] dim)]
+  (let [x (mx/get-val [row col] coll)
+        adj (mx/gen-neighbours [row col] dim)]
     (->> adj
-         (filter #(valid-coord? % dim))
-         (map #(get-val % coll))
+         (filter #(mx/valid-coord? % dim))
+         (map #(mx/get-val % coll))
          (every? #(> % x)))))
 
 (defn- find-low-points
   [coll]
-  (let [dim (get-dim coll)
-        coords (gen-coords dim)]
+  (let [dim (mx/dimensions coll)
+        coords (mx/gen-coords dim)]
     (filter #(is-low-point? % dim coll) coords)))
 
 (defn- solve1
   [coll]
   (->> coll
        (find-low-points)
-       (map #(get-val % coll))
+       (map #(mx/get-val % coll))
        (map inc)
        (reduce +)))
 
 (defn- basin-size
   [[row col :as coord] dim coll prev visited]
-  (if (and (valid-coord? coord dim)
+  (if (and (mx/valid-coord? coord dim)
            (not (contains? visited coord)))
-    (let [x (get-val coord coll)]
+    (let [x (mx/get-val coord coll)]
       (if (or (nil? prev) (> 9 x prev))
         (let [visited (conj visited coord)
               {top :size
@@ -101,7 +72,7 @@
   [coll]
   (->> coll
        (find-low-points)
-       (map #(basin-size % (get-dim coll) coll nil #{}))
+       (map #(basin-size % (mx/dimensions coll) coll nil #{}))
        (map :size)
        (sort-by #(- %))
        (take 3)
