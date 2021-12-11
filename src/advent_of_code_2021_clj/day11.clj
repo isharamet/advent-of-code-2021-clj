@@ -1,6 +1,7 @@
 (ns advent-of-code-2021-clj.day11
   (:require [clojure.string :as str]
-            [advent-of-code-2021-clj.matrix :as mx]))
+            [advent-of-code-2021-clj.matrix :as mx]
+            [advent-of-code-2021-clj.matrix-viz :as viz]))
 
 (def zero (int \0))
 
@@ -74,11 +75,14 @@
 (defn- progress-till-sync
   [m]
   (let [dim (mx/dimensions m)
-        coords (mx/gen-coords dim)]
+        coords (mx/gen-coords dim)
+        frame (viz/create-window m)]
     (loop [m m
            c 0]
       (let [m ((progress coords dim m) :m)
-            c (inc c)]
+            c (inc c)
+            _ (do (Thread/sleep 200)
+                  (viz/draw-matrix frame m))]
         (if (synchronized? m) c (recur m c))))))
 
 (defn- solve1
