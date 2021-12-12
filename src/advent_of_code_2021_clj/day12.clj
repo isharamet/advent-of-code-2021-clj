@@ -35,31 +35,60 @@
   [node]
   (every? #(Character/isLowerCase %) node))
 
-(defn- paths
-  [node visited mapping]
-  (if (= node end)
+(defn- paths1
+  [cave visited mapping]
+  (if (= cave end)
     1
-    (if (and (small? node) (contains? visited node))
+    (if (and (small? cave) (contains? visited cave))
       0
-      (let [nodes (mapping node)]
-        (if (empty? nodes)
+      (let [caves (mapping cave)]
+        (if (empty? caves)
           0
-          (->> nodes
-               (map #(paths % (conj visited node) mapping))
+          (->> caves
+               (map #(paths1 % (conj visited cave) mapping))
                (reduce +)))))))
+
+(defn- allowed-to-visit?
+  [cave visited]
+  (let [cnt (get visited cave 0)]
+    (if (= cave start)
+      (zero? cnt)
+      (if (and (small? cave) (> cnt 0))
+        (->> visited
+             (filter (fn [[k _]] (small? k)))
+             (map (fn [[_ v]] v))
+             (every? #(< % 2)))
+        true))))
+
+(defn- update-visit-count
+  [cave visited]
+  (update visited cave #(if (nil? %) 1 (inc %))))
+
+(defn- paths2
+  [cave visited mapping]
+  (if (= cave end)
+    1
+    (if (allowed-to-visit? cave visited)
+      (let [caves (mapping cave)]
+        (if (empty? caves)
+          0
+          (->> caves
+               (map #(paths2 % (update-visit-count cave visited) mapping))
+               (reduce +))))
+      0)))
 
 (defn- solve1
   [input]
-  (paths start #{} input))
+  (paths1 start #{} input))
 
-;; (defn- solve2
-;;   [input]
-;;   input)
+(defn- solve2
+  [input]
+  (paths2 start {} input))
 
 (defn part1
   [input]
   (solve1 (parse-input input)))
 
-;; (defn part2
-;;   [input]
-;;   (solve2 (parse-input input)))
+(defn part2
+  [input]
+  (solve2 (parse-input input)))
