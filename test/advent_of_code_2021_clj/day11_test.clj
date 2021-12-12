@@ -5,6 +5,7 @@
 
 (day11/part2 (core/read-input "day11-test"))
 
+
 (deftest test-part1
   (is (= 1656 (day11/part1 (core/read-input "day11-test")))))
 
