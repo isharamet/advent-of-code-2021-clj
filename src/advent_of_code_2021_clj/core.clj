@@ -13,7 +13,8 @@
             [advent-of-code-2021-clj.day10 :as day10]
             [advent-of-code-2021-clj.day11 :as day11]
             [advent-of-code-2021-clj.day12 :as day12]
-            [advent-of-code-2021-clj.day13 :as day13]))
+            [advent-of-code-2021-clj.day13 :as day13]
+            [advent-of-code-2021-clj.day14 :as day14]))
 
 (defn read-input
   [day]
@@ -61,4 +62,7 @@
     "day13" (println
              (day13/part1 (read-input "day13"))
              (day13/part2 (read-input "day13")))
+    "day14" (println
+             (day14/part1 (read-input "day14"))
+             (day14/part2 (read-input "day14")))
     (println (str "No solution for " day " yet..."))))

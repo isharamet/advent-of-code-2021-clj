@@ -15,8 +15,7 @@
   [input]
   (->> input
        (str/split-lines)
-       (map parse-insertion)
-       (into {})))
+       (map parse-insertion)))
 
 (defn- parse-input
   [input]
@@ -26,46 +25,62 @@
     {:template template
      :insertions insertions}))
 
+(defn- freq-map
+  [s]
+  (->> s
+       (partition 2 1)
+       (group-by identity)
+       (map (fn [[k v]] [k (count v)]))
+       (into {})))
+
+(defn- update-cnt-fn
+  [cnt]
+  (fn [x] (if (nil? x) cnt (+ x cnt))))
 
 (defn- result
   [m]
-  (let [xs (vals m)
-        counts (map count xs)
+  (let [m (reduce
+           (fn [acc [[a b] cnt]]
+             (->> acc
+                  (#(update % a (update-cnt-fn cnt)))
+                  (#(update % b (update-cnt-fn cnt)))))
+           {}
+           m)
+        xs (vals m)
+        counts (map (fn [x] (Math/ceil (/ x 2))) xs)
         a (apply max counts)
         b (apply min counts)]
-    (- a b)))
+    (long (- a b))))
 
-(defn- solve1
+(defn- make-insertion
+  [[m mn] [[a b] c]]
+  (let [cnt (m [a b])]
+    (if (nil? cnt)
+      [m mn]
+      [(dissoc m [a b])
+       (->> mn
+            (#(update % [a c] (update-cnt-fn cnt)))
+            (#(update % [c b] (update-cnt-fn cnt))))])))
+
+(defn- make-insertions
+  [m inss]
+  (let [[m mn] (reduce make-insertion [m {}] inss)]
+    (merge-with + m mn)))
+
+(defn- solve
   [{template :template insertions :insertions} n]
   (->> template
-       (#(reduce (fn [s _]
-                   (loop [acc '()
-                          tail (reverse s)]
-                     (if (empty? tail)
-                       acc
-                       (let [b (first tail)
-                             tail (rest tail)
-                             a (first tail)
-                             acc (cons b acc)]
-                         (if (nil? a)
-                           acc
-                           (let [c (insertions [a b])]
-                             (if (nil? c)
-                               (recur acc tail)
-                               (recur (cons c acc) tail))))))))
-                 %
-                 (range n)))
-       (group-by identity)
+       (freq-map)
+       (#(reduce
+          (fn [m _] (make-insertions m insertions))
+          %
+          (range n)))
        (result)))
-
-(defn- solve2
-  [{template :template insertions :insertions}]
-  [template insertions])
 
 (defn part1
   [input]
-  (solve1 (parse-input input) 10))
+  (solve (parse-input input) 10))
 
 (defn part2
   [input]
-  (solve2 (parse-input input)))
+  (solve (parse-input input) 40))
