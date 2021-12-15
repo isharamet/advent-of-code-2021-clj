@@ -28,7 +28,7 @@ lein run day01
 - [x] [Day 12: Passage Pathing](https://adventofcode.com/2021/day/12)
 - [x] [Day 13: Transparent Origami](https://adventofcode.com/2021/day/13)
 - [x] [Day 14: Extended Polymerization](https://adventofcode.com/2021/day/14)
-- [ ] [Day 15](https://adventofcode.com/2021/day/15)
+- [x] [Day 15: Chiton](https://adventofcode.com/2021/day/15)
 - [ ] [Day 16](https://adventofcode.com/2021/day/16)
 - [ ] [Day 17](https://adventofcode.com/2021/day/17)
 - [ ] [Day 18](https://adventofcode.com/2021/day/18)

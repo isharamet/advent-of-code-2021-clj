@@ -37,36 +37,46 @@
         coords (mx/gen-coords [h w])
         dist (into {[0 0] 0}
                    (map (fn [c] [c Integer/MAX_VALUE]) (rest coords)))
-        prev (into {} (map (fn [c] [c nil]) coords))
         q (reduce (fn [acc x] (assoc acc x Integer/MAX_VALUE))
                   (priority-map-by < [0 0] 0)
                   (rest coords))]
     (loop [dist dist
-           prev prev
            q q]
       (if (empty? q)
-        [dist prev]
+        dist
         (let [[cu du] (peek q)
               q (pop q)
               vs (gen-not-visited-neighbours cu [h w] q)
-              [dist prev q] (reduce
-                             (fn [[dist prev q] cv]
-                               (let [dt (+ du (mx/get-val cv m))
-                                     dv (dist cv)]
-                                 (if (< dt dv)
-                                   [(assoc dist cv dt)
-                                    (assoc prev cv cu)
-                                    (assoc q cv dt)]
-                                   [dist prev q])))
-                             [dist prev q]
-                             vs)]
-          (recur dist prev q))))))
+              [dist q] (reduce
+                        (fn [[dist q] cv]
+                          (let [dt (+ du (mx/get-val cv m))
+                                dv (dist cv)]
+                            (if (< dt dv)
+                              [(assoc dist cv dt)
+                               (assoc q cv dt)]
+                              [dist q])))
+                        [dist q]
+                        vs)]
+          (recur dist q))))))
 
 (defn- solve
   [m]
   (let [[h w] (mx/dimensions m)
-        [dist prev] (find-distances m)]
+        dist (find-distances m)]
     (dist [(dec h) (dec w)])))
+
+(defn- scale-fn
+  [factor]
+  (fn [x]
+    (let [x (+ x factor)]
+      (if (> x 9) (mod (inc x) 10) x))))
+
+(defn- scale-matrix
+  [m factor]
+  (let [r (range factor)
+        m (map #(reduce (fn [acc i] (into acc (map (scale-fn i) %))) [] r) m)
+        m (reduce (fn [acc i] (into acc (mx/transform m (scale-fn i)))) [] r)]
+    m))
 
 (defn part1
   [input]
@@ -74,4 +84,7 @@
 
 (defn part2
   [input]
-  (parse-input input))
+  (->> input
+       (parse-input)
+       (#(scale-matrix % 5))
+       (solve)))
