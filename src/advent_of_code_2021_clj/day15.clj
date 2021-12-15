@@ -74,9 +74,8 @@
 (defn- scale-matrix
   [m factor]
   (let [r (range factor)
-        m (map #(reduce (fn [acc i] (into acc (map (scale-fn i) %))) [] r) m)
-        m (reduce (fn [acc i] (into acc (mx/transform m (scale-fn i)))) [] r)]
-    m))
+        m (map #(reduce (fn [acc i] (into acc (map (scale-fn i) %))) [] r) m)]
+    (reduce (fn [acc i] (into acc (mx/transform m (scale-fn i)))) [] r)))
 
 (defn part1
   [input]
