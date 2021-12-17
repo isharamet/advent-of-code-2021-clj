@@ -115,6 +115,22 @@
       v
       (+ v (reduce + (map sum-versions (p :val)))))))
 
+(def operations
+  {0 +
+   1 *
+   2 min
+   3 max
+   5 (fn [l r] (if (> l r) 1  0))
+   6 (fn [l r] (if (< l r) 1  0))
+   7 (fn [l r] (if (= l r) 1  0))})
+
+(defn- eval-packet
+  [p]
+  (let [id (p :id)]
+    (if (= id 4)
+      (p :val)
+      (apply (operations id) (map eval-packet (p :val))))))
+
 (defn part1
   [input]
   (->> input
@@ -123,6 +139,10 @@
        (#(nth % 1))
        (sum-versions)))
 
-;; (defn part2
-;;   [input]
-;;   (parse-input input))
+(defn part2
+  [input]
+  (->> input
+       (parse-input)
+       (parse-packet)
+       (#(nth % 1))
+       (eval-packet)))
