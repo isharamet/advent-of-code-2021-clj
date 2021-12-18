@@ -128,6 +128,26 @@
       (+ l r))
     x))
 
+(defn- cross-magnitudes
+  [xs]
+  (let [n (count xs)
+        r (range n)]
+    (reduce
+     (fn [acc i]
+       (reduce
+        (fn [acc j]
+          (if (= i j)
+            acc
+            (->> [(nth xs i) (nth xs j)]
+                 ((fn [[l r]] (add-numbers l r)))
+                 (reduce-pair)
+                 (magnitude)
+                 (conj acc))))
+        acc
+        r))
+     '()
+     r)))
+
 (defn part1
   [input]
   (->> input
@@ -137,4 +157,7 @@
 
 (defn part2
   [input]
-  (parse-input input))
+  (->> input
+       (parse-input)
+       (cross-magnitudes)
+       (apply max)))

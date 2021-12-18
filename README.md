@@ -31,7 +31,7 @@ lein run day01
 - [x] [Day 15: Chiton](https://adventofcode.com/2021/day/15)
 - [x] [Day 16: Packet Decoder](https://adventofcode.com/2021/day/16)
 - [x] [Day 17: Trick Shot](https://adventofcode.com/2021/day/17)
-- [ ] [Day 18](https://adventofcode.com/2021/day/18)
+- [x] [Day 18: Snailfish](https://adventofcode.com/2021/day/18)
 - [ ] [Day 19](https://adventofcode.com/2021/day/19)
 - [ ] [Day 20](https://adventofcode.com/2021/day/20)
 - [ ] [Day 21](https://adventofcode.com/2021/day/21)
