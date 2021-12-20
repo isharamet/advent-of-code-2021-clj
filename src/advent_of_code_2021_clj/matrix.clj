@@ -50,3 +50,10 @@
   [m f]
   (map (fn [r] (map (fn [x] (f x)) r)) m))
 
+(defn pprint
+  [m]
+  (doseq [r m]
+    (doseq [x r]
+      (print " " (if (zero? x) "." "x")))
+    (println)))
+
