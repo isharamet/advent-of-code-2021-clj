@@ -100,18 +100,14 @@
        (map #(reduce + %))
        (reduce +)))
 
+(defn- solve
+  [{img :image alg :algorithm} n]
+  (count-lit (enchance (frame-image img 0) alg n)))
+
 (defn part1
   [input]
-  (->> input
-       (parse-input)
-       ((fn [{img :image
-              alg :algorithm}]
-          (enchance (frame-image img 0) alg 2)))
-      ;;  (#(do (mx/pprint %)
-      ;;        %))
-       (count-lit)))
+  (solve (parse-input input) 2))
 
 (defn part2
   [input]
-  (->> input
-       (parse-input)))
+  (solve (parse-input input) 50))

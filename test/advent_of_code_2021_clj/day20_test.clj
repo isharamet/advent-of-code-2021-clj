@@ -6,10 +6,8 @@
 (def test-input
   (core/read-input "day20-test"))
 
-;; (day20/part1 test-input)
-
 (deftest test-part1
   (is (= 35 (day20/part1 test-input))))
 
-;; (deftest test-part2
-;;   (is (= 3621 (day20/part2 test-input))))
+(deftest test-part2
+  (is (= 3351 (day20/part2 test-input))))
