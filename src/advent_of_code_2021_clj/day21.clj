@@ -1,5 +1,6 @@
 (ns advent-of-code-2021-clj.day21
-  (:require [clojure.string :as str]))
+  (:require [clojure.string :as str]
+            [clojure.math.combinatorics :as combo]))
 
 (defn- parse-position
   [input]
@@ -45,14 +46,35 @@
     (let [{scores :scores turn :turn} (first game)
           [_ score] (nth scores turn)]
       (if (>= score 1000)
-        (do (println prev-score turns)
-            (* prev-score (* turns 3)))
+        (* prev-score (* turns 3))
         (recur (rest game) (inc turns) score)))))
+
+(def dirac-dice-rolls
+  (->> [1 2 3]
+       (#(combo/selections % 3))
+       (map #(apply + %))))
+
+(def play-in-multiverse
+  (memoize
+   (fn [[pos1 score1] [pos2 score2]]
+     (if (>= score1 21)
+       [1 0]
+       (if (>= score2 21)
+         [0 1]
+         (reduce (fn [[wins1 wins2] roll]
+                   (let [m (mod (+ pos1 roll) 10)
+                         pos1 (if (= 0 m) 10 m)
+                         score1 (+ score1 pos1)
+                         [w2 w1] (play-in-multiverse [pos2 score2] [pos1 score1])]
+                     [(+ wins1 w1) (+ wins2 w2)]))
+                 [0N 0N]
+                 dirac-dice-rolls))))))
 
 (defn part1
   [input]
   (play (parse-input input)))
 
-;; (defn part2
-;;   [input]
-;;   (solve (parse-input input) 50))
+(defn part2
+  [input]
+  (let [[pos1 pos2] (parse-input input)]
+    (apply max (play-in-multiverse [pos1 0] [pos2 0]))))

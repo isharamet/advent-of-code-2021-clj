@@ -34,7 +34,7 @@ lein run day01
 - [x] [Day 18: Snailfish](https://adventofcode.com/2021/day/18)
 - [x] [Day 19: Beacon Scanner](https://adventofcode.com/2021/day/19)
 - [x] [Day 20: Trench Map](https://adventofcode.com/2021/day/20)
-- [ ] [Day 21](https://adventofcode.com/2021/day/21)
+- [x] [Day 21: Dirac Dice ](https://adventofcode.com/2021/day/21)
 - [ ] [Day 22](https://adventofcode.com/2021/day/22)
 - [ ] [Day 23](https://adventofcode.com/2021/day/23)
 - [ ] [Day 24](https://adventofcode.com/2021/day/24)
